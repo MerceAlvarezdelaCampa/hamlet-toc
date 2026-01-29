@@ -36,7 +36,7 @@ void AClickSelectPlayerController::SetupInputComponent()
 	if (InputComponent)
 	{
 		InputComponent->BindAction("Select", IE_Pressed, this, &AClickSelectPlayerController::HandleSelectPressed);
-		InputComponent->BindKey(EKeys::W, IE_Pressed, this, &AClickSelectPlayerController::HandleTranslatePressed);
+		InputComponent->BindKey(EKeys::T, IE_Pressed, this, &AClickSelectPlayerController::HandleTranslatePressed);
 		InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AClickSelectPlayerController::HandleGizmoDragPressed);
 		InputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AClickSelectPlayerController::HandleGizmoDragReleased);
 	}
