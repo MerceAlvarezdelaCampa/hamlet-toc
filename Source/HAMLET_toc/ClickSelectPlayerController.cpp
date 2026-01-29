@@ -91,8 +91,21 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 
 void AClickSelectPlayerController::ConfigureOutlinePostProcess()
 {
-	if (!SelectionOutlineMaterial || !PlayerCameraManager)
+	if (!PlayerCameraManager)
 	{
+		return;
+	}
+
+	if (!SelectionOutlineMaterial)
+	{
+		SelectionOutlineMaterial = LoadObject<UMaterialInterface>(
+			nullptr,
+			TEXT("/Engine/EditorMaterials/SelectionOutlineMaterial.SelectionOutlineMaterial"));
+	}
+
+	if (!SelectionOutlineMaterial)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelectionOutlineMaterial is not set; assign a post-process outline material to enable selection highlighting."));
 		return;
 	}
 
