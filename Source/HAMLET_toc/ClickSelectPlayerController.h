@@ -43,6 +43,7 @@ private:
 	TObjectPtr<ARuntimeMoveGizmoActor> GizmoActor;
 
 	bool bIsDraggingGizmo = false;
+	bool bIsGizmoHidden = false;
 	FPlane DragPlane = FPlane(FVector::ZeroVector, FVector::UpVector);
 	FVector DragOffset = FVector::ZeroVector;
 

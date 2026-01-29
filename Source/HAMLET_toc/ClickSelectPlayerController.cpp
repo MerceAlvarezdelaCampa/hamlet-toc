@@ -73,11 +73,11 @@ void AClickSelectPlayerController::HandleTranslatePressed()
 
 	if (GizmoActor)
 	{
-		const bool bIsHidden = GizmoActor->IsActorHiddenInGame();
-		GizmoActor->SetActorHiddenInGame(!bIsHidden);
-		GizmoActor->SetActorEnableCollision(bIsHidden);
+		bIsGizmoHidden = !bIsGizmoHidden;
+		GizmoActor->SetActorHiddenInGame(bIsGizmoHidden);
+		GizmoActor->SetActorEnableCollision(!bIsGizmoHidden);
 		bIsDraggingGizmo = false;
-		if (bIsHidden)
+		if (!bIsGizmoHidden)
 		{
 			GizmoActor->SetActorLocation(SelectedActor->GetActorLocation());
 		}
@@ -94,7 +94,7 @@ void AClickSelectPlayerController::HandleGizmoDragPressed()
 		return;
 	}
 
-	if (GizmoActor->IsActorHiddenInGame())
+	if (bIsGizmoHidden)
 	{
 		return;
 	}
@@ -125,7 +125,7 @@ void AClickSelectPlayerController::UpdateGizmoDrag(float DeltaSeconds)
 		return;
 	}
 
-	if (GizmoActor->IsActorHiddenInGame())
+	if (bIsGizmoHidden)
 	{
 		return;
 	}
@@ -162,6 +162,7 @@ void AClickSelectPlayerController::SpawnOrMoveGizmo()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		GizmoActor = GetWorld()->SpawnActor<ARuntimeMoveGizmoActor>(GizmoClass, GizmoSpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		bIsGizmoHidden = false;
 	}
 	else
 	{
