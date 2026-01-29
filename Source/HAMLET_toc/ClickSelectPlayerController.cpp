@@ -73,7 +73,7 @@ void AClickSelectPlayerController::HandleTranslatePressed()
 
 	if (GizmoActor)
 	{
-		const bool bIsHidden = GizmoActor->IsHiddenInGame();
+		const bool bIsHidden = GizmoActor->IsActorHiddenInGame();
 		GizmoActor->SetActorHiddenInGame(!bIsHidden);
 		GizmoActor->SetActorEnableCollision(bIsHidden);
 		bIsDraggingGizmo = false;
@@ -94,7 +94,7 @@ void AClickSelectPlayerController::HandleGizmoDragPressed()
 		return;
 	}
 
-	if (GizmoActor->IsHiddenInGame())
+	if (GizmoActor->IsActorHiddenInGame())
 	{
 		return;
 	}
@@ -125,7 +125,7 @@ void AClickSelectPlayerController::UpdateGizmoDrag(float DeltaSeconds)
 		return;
 	}
 
-	if (GizmoActor->IsHiddenInGame())
+	if (GizmoActor->IsActorHiddenInGame())
 	{
 		return;
 	}
