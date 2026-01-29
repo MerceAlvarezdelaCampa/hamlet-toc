@@ -1,0 +1,21 @@
+# Visual Studio / IDE files
+.vs/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+
+# Unreal Engine Generated Folders (DO NOT COMMIT THESE)
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db
+
+# JetBrains Rider
+.idea/
+*.sln.DotSettings.user
