@@ -5,6 +5,7 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "HAL/IConsoleManager.h"
 #include "Components/PrimitiveComponent.h"
 
 void AClickSelectPlayerController::BeginPlay()
@@ -14,6 +15,11 @@ void AClickSelectPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
+
+	if (IConsoleVariable* CustomDepthVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.CustomDepth")))
+	{
+		CustomDepthVar->Set(3, ECVF_SetByCode);
+	}
 }
 
 void AClickSelectPlayerController::SetupInputComponent()
@@ -64,6 +70,7 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		return;
 	}
 
+	constexpr int32 SelectionStencilValue = 1;
 	TInlineComponentArray<UPrimitiveComponent*> PrimitiveComponents;
 	Actor->GetComponents(PrimitiveComponents);
 	for (UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
@@ -74,9 +81,6 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		}
 
 		PrimitiveComponent->SetRenderCustomDepth(bSelected);
-		if (bSelected)
-		{
-			PrimitiveComponent->SetCustomDepthStencilValue(1);
-		}
+		PrimitiveComponent->SetCustomDepthStencilValue(bSelected ? SelectionStencilValue : 0);
 	}
 }
