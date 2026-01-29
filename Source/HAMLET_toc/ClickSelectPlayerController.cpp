@@ -2,10 +2,12 @@
 
 #include "ClickSelectPlayerController.h"
 
+#include "GizmoActor.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "HAL/IConsoleManager.h"
+#include "InputCoreTypes.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/PrimitiveComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -34,7 +36,17 @@ void AClickSelectPlayerController::SetupInputComponent()
 	if (InputComponent)
 	{
 		InputComponent->BindAction("Select", IE_Pressed, this, &AClickSelectPlayerController::HandleSelectPressed);
+		InputComponent->BindKey(EKeys::W, IE_Pressed, this, &AClickSelectPlayerController::HandleTranslatePressed);
+		InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &AClickSelectPlayerController::HandleGizmoDragPressed);
+		InputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &AClickSelectPlayerController::HandleGizmoDragReleased);
 	}
+}
+
+void AClickSelectPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	UpdateGizmoDrag(DeltaSeconds);
 }
 
 void AClickSelectPlayerController::HandleSelectPressed()
@@ -45,6 +57,88 @@ void AClickSelectPlayerController::HandleSelectPressed()
 	AActor* HitActor = bHit ? HitResult.GetActor() : nullptr;
 
 	UpdateSelection(HitActor);
+}
+
+void AClickSelectPlayerController::HandleTranslatePressed()
+{
+	if (!SelectedActor)
+	{
+		return;
+	}
+
+	SpawnOrMoveGizmo();
+}
+
+void AClickSelectPlayerController::HandleGizmoDragPressed()
+{
+	if (!GizmoActor)
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	const ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+	const bool bHit = GetHitResultUnderCursorByChannel(TraceChannel, true, HitResult);
+	if (!bHit || HitResult.GetActor() != GizmoActor)
+	{
+		return;
+	}
+
+	bIsDraggingGizmo = true;
+	const FVector GizmoLocation = GizmoActor->GetActorLocation();
+	DragPlane = FPlane(GizmoLocation, FVector::UpVector);
+	DragOffset = GizmoLocation - HitResult.Location;
+}
+
+void AClickSelectPlayerController::HandleGizmoDragReleased()
+{
+	bIsDraggingGizmo = false;
+}
+
+void AClickSelectPlayerController::UpdateGizmoDrag(float DeltaSeconds)
+{
+	if (!bIsDraggingGizmo || !GizmoActor)
+	{
+		return;
+	}
+
+	FVector WorldOrigin;
+	FVector WorldDirection;
+	if (!DeprojectMousePositionToWorld(WorldOrigin, WorldDirection))
+	{
+		return;
+	}
+
+	const FVector RayEnd = WorldOrigin + WorldDirection * 100000.0f;
+	const FVector Intersection = FMath::LinePlaneIntersection(WorldOrigin, RayEnd, DragPlane);
+	const FVector NewLocation = Intersection + DragOffset;
+
+	GizmoActor->SetActorLocation(NewLocation);
+	if (SelectedActor)
+	{
+		SelectedActor->SetActorLocation(NewLocation);
+	}
+}
+
+void AClickSelectPlayerController::SpawnOrMoveGizmo()
+{
+	if (!GizmoClass)
+	{
+		GizmoClass = AGizmoActor::StaticClass();
+	}
+
+	const FVector SpawnLocation = SelectedActor ? SelectedActor->GetActorLocation() : FVector::ZeroVector;
+
+	if (!GizmoActor)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		GizmoActor = GetWorld()->SpawnActor<AGizmoActor>(GizmoClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	}
+	else
+	{
+		GizmoActor->SetActorLocation(SpawnLocation);
+	}
 }
 
 void AClickSelectPlayerController::UpdateSelection(AActor* NewSelection)
@@ -65,6 +159,10 @@ void AClickSelectPlayerController::UpdateSelection(AActor* NewSelection)
 	{
 		SetActorSelected(SelectedActor, true);
 		UE_LOG(LogTemp, Log, TEXT("Selected actor: %s"), *SelectedActor->GetName());
+		if (GizmoActor)
+		{
+			GizmoActor->SetActorLocation(SelectedActor->GetActorLocation());
+		}
 	}
 }
 
