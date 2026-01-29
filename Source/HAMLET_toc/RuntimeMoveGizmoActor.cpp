@@ -20,10 +20,23 @@ ARuntimeMoveGizmoActor::ARuntimeMoveGizmoActor()
 	MeshComponent->SetGenerateOverlapEvents(false);
 	MeshComponent->SetMobility(EComponentMobility::Movable);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder(TEXT("/Engine/BasicShapes/Arrow.Arrow"));
-	if (MeshFinder.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder(TEXT("/Game/Axis_Guide.Axis_Guide"));
+	if (!MeshFinder.Succeeded())
+	{
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> FallbackMeshFinder(TEXT("/Engine/BasicShapes/Arrow.Arrow"));
+		if (FallbackMeshFinder.Succeeded())
+		{
+			MeshComponent->SetStaticMesh(FallbackMeshFinder.Object);
+			MeshComponent->SetWorldScale3D(FVector(0.5f));
+		}
+	}
+	else
 	{
 		MeshComponent->SetStaticMesh(MeshFinder.Object);
+	}
+
+	if (MeshComponent->GetStaticMesh())
+	{
 		MeshComponent->SetWorldScale3D(FVector(0.5f));
 	}
 }
