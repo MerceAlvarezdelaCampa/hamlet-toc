@@ -18,11 +18,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Selection|Outline")
+	void SetSelectionOutlineColor(const FLinearColor& NewColor);
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Selection|Outline", meta = (ClampMin = "1", ClampMax = "255"))
 	int32 SelectionStencilValue = 1;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Selection|Outline")
+	UPROPERTY(EditAnywhere, Category = "Selection|Outline")
 	FLinearColor SelectionOutlineColor = FLinearColor(1.0f, 0.5f, 0.0f, 1.0f);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Selection|Outline")

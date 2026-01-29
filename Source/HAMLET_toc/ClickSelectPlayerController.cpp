@@ -37,6 +37,15 @@ void AClickSelectPlayerController::SetupInputComponent()
 	}
 }
 
+void AClickSelectPlayerController::SetSelectionOutlineColor(const FLinearColor& NewColor)
+{
+	SelectionOutlineColor = NewColor;
+	if (SelectionOutlineMID)
+	{
+		SelectionOutlineMID->SetVectorParameterValue(TEXT("OutlineColor"), SelectionOutlineColor);
+	}
+}
+
 void AClickSelectPlayerController::HandleSelectPressed()
 {
 	FHitResult HitResult;
