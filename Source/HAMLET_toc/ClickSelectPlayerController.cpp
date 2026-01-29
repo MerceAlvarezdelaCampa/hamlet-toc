@@ -6,7 +6,10 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "HAL/IConsoleManager.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Components/PrimitiveComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialInterface.h"
 
 void AClickSelectPlayerController::BeginPlay()
 {
@@ -20,6 +23,8 @@ void AClickSelectPlayerController::BeginPlay()
 	{
 		CustomDepthVar->Set(3, ECVF_SetByCode);
 	}
+
+	ConfigureOutlinePostProcess();
 }
 
 void AClickSelectPlayerController::SetupInputComponent()
@@ -70,7 +75,6 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		return;
 	}
 
-	constexpr int32 SelectionStencilValue = 1;
 	TInlineComponentArray<UPrimitiveComponent*> PrimitiveComponents;
 	Actor->GetComponents(PrimitiveComponents);
 	for (UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
@@ -83,4 +87,21 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		PrimitiveComponent->SetRenderCustomDepth(bSelected);
 		PrimitiveComponent->SetCustomDepthStencilValue(bSelected ? SelectionStencilValue : 0);
 	}
+}
+
+void AClickSelectPlayerController::ConfigureOutlinePostProcess()
+{
+	if (!SelectionOutlineMaterial || !PlayerCameraManager)
+	{
+		return;
+	}
+
+	SelectionOutlineMID = UMaterialInstanceDynamic::Create(SelectionOutlineMaterial, this);
+	if (!SelectionOutlineMID)
+	{
+		return;
+	}
+
+	SelectionOutlineMID->SetVectorParameterValue(TEXT("OutlineColor"), SelectionOutlineColor);
+	PlayerCameraManager->ViewTarget.POV.PostProcessSettings.AddBlendable(SelectionOutlineMID, 1.0f);
 }
