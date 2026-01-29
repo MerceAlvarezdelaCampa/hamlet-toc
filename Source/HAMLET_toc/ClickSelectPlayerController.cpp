@@ -2,7 +2,7 @@
 
 #include "ClickSelectPlayerController.h"
 
-#include "GizmoActor.h"
+#include "RuntimeMoveGizmoActor.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -124,7 +124,7 @@ void AClickSelectPlayerController::SpawnOrMoveGizmo()
 {
 	if (!GizmoClass)
 	{
-		GizmoClass = AGizmoActor::StaticClass();
+		GizmoClass = ARuntimeMoveGizmoActor::StaticClass();
 	}
 
 	const FVector SpawnLocation = SelectedActor ? SelectedActor->GetActorLocation() : FVector::ZeroVector;
@@ -133,7 +133,7 @@ void AClickSelectPlayerController::SpawnOrMoveGizmo()
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
-		GizmoActor = GetWorld()->SpawnActor<AGizmoActor>(GizmoClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		GizmoActor = GetWorld()->SpawnActor<ARuntimeMoveGizmoActor>(GizmoClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 	}
 	else
 	{

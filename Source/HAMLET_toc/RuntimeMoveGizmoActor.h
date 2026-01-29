@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GizmoActor.generated.h"
+#include "RuntimeMoveGizmoActor.generated.h"
 
 UCLASS()
-class HAMLET_TOC_API AGizmoActor : public AActor
+class HAMLET_TOC_API ARuntimeMoveGizmoActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AGizmoActor();
+	ARuntimeMoveGizmoActor();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Gizmo")

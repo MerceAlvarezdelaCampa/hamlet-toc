@@ -1,12 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "GizmoActor.h"
+#include "RuntimeMoveGizmoActor.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "UObject/ConstructorHelpers.h"
 
-AGizmoActor::AGizmoActor()
+ARuntimeMoveGizmoActor::ARuntimeMoveGizmoActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 

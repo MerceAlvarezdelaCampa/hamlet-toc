@@ -8,7 +8,7 @@
 
 class UMaterialInstanceDynamic;
 class UMaterialInterface;
-class AGizmoActor;
+class ARuntimeMoveGizmoActor;
 
 UCLASS()
 class HAMLET_TOC_API AClickSelectPlayerController : public APlayerController
@@ -37,10 +37,10 @@ private:
 	TObjectPtr<AActor> SelectedActor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Selection|Gizmo")
-	TSubclassOf<AGizmoActor> GizmoClass;
+	TSubclassOf<ARuntimeMoveGizmoActor> GizmoClass;
 
 	UPROPERTY(Transient)
-	TObjectPtr<AGizmoActor> GizmoActor;
+	TObjectPtr<ARuntimeMoveGizmoActor> GizmoActor;
 
 	bool bIsDraggingGizmo = false;
 	FPlane DragPlane = FPlane(FVector::ZeroVector, FVector::UpVector);
