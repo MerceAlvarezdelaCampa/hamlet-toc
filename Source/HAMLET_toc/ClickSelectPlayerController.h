@@ -23,7 +23,7 @@ private:
 	int32 SelectionStencilValue = 1;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Selection|Outline")
-	FLinearColor SelectionOutlineColor = FLinearColor(1.0f, 0.5f, 0.0f, 1.0f);
+	FLinearColor SelectionOutlineColor = FLinearColor(0.0f, 0.5f, 0.0f, 1.0f);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Selection|Outline")
 	TObjectPtr<UMaterialInterface> SelectionOutlineMaterial;
