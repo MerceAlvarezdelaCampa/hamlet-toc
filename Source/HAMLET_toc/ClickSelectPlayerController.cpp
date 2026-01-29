@@ -56,6 +56,11 @@ void AClickSelectPlayerController::HandleSelectPressed()
 	const bool bHit = GetHitResultUnderCursorByChannel(TraceChannel, true, HitResult);
 	AActor* HitActor = bHit ? HitResult.GetActor() : nullptr;
 
+	if (HitActor && GizmoActor && HitActor == GizmoActor)
+	{
+		return;
+	}
+
 	UpdateSelection(HitActor);
 }
 
