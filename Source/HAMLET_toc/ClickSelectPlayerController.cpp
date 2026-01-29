@@ -127,17 +127,17 @@ void AClickSelectPlayerController::SpawnOrMoveGizmo()
 		GizmoClass = ARuntimeMoveGizmoActor::StaticClass();
 	}
 
-	const FVector SpawnLocation = SelectedActor ? SelectedActor->GetActorLocation() : FVector::ZeroVector;
+	const FVector GizmoSpawnLocation = SelectedActor ? SelectedActor->GetActorLocation() : FVector::ZeroVector;
 
 	if (!GizmoActor)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
-		GizmoActor = GetWorld()->SpawnActor<ARuntimeMoveGizmoActor>(GizmoClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		GizmoActor = GetWorld()->SpawnActor<ARuntimeMoveGizmoActor>(GizmoClass, GizmoSpawnLocation, FRotator::ZeroRotator, SpawnParams);
 	}
 	else
 	{
-		GizmoActor->SetActorLocation(SpawnLocation);
+		GizmoActor->SetActorLocation(GizmoSpawnLocation);
 	}
 }
 
