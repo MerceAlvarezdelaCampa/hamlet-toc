@@ -64,16 +64,19 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		return;
 	}
 
-	TArray<UActorComponent*> Components = Actor->GetComponentsByClass(UPrimitiveComponent::StaticClass());
-	for (UActorComponent* Component : Components)
+	TInlineComponentArray<UPrimitiveComponent*> PrimitiveComponents;
+	Actor->GetComponents(PrimitiveComponents);
+	for (UPrimitiveComponent* PrimitiveComponent : PrimitiveComponents)
 	{
-		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
+		if (!PrimitiveComponent)
 		{
-			PrimitiveComponent->SetRenderCustomDepth(bSelected);
-			if (bSelected)
-			{
-				PrimitiveComponent->SetCustomDepthStencilValue(1);
-			}
+			continue;
+		}
+
+		PrimitiveComponent->SetRenderCustomDepth(bSelected);
+		if (bSelected)
+		{
+			PrimitiveComponent->SetCustomDepthStencilValue(1);
 		}
 	}
 }
