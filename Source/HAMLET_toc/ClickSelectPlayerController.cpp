@@ -37,6 +37,16 @@ void AClickSelectPlayerController::SetupInputComponent()
 	}
 }
 
+void AClickSelectPlayerController::SetSelectionOutlineColor(const FLinearColor& NewColor)
+{
+	SelectionOutlineColor = NewColor;
+
+	if (SelectionOutlineMID)
+	{
+		SelectionOutlineMID->SetVectorParameterValue(TEXT("OutlineColor"), SelectionOutlineColor);
+	}
+}
+
 void AClickSelectPlayerController::HandleSelectPressed()
 {
 	FHitResult HitResult;
@@ -100,7 +110,7 @@ void AClickSelectPlayerController::ConfigureOutlinePostProcess()
 	{
 		SelectionOutlineMaterial = LoadObject<UMaterialInterface>(
 			nullptr,
-			TEXT("/Engine/EditorMaterials/SelectionOutlineMaterial.SelectionOutlineMaterial"));
+			TEXT("/Game/M_SelectionOutline.M_SelectionOutline"));
 	}
 
 	if (!SelectionOutlineMaterial)
@@ -115,6 +125,6 @@ void AClickSelectPlayerController::ConfigureOutlinePostProcess()
 		return;
 	}
 
-	SelectionOutlineMID->SetVectorParameterValue(TEXT("OutlineColor"), SelectionOutlineColor);
+	SetSelectionOutlineColor(SelectionOutlineColor);
 	PlayerCameraManager->ViewTarget.POV.PostProcessSettings.AddBlendable(SelectionOutlineMID, 1.0f);
 }
