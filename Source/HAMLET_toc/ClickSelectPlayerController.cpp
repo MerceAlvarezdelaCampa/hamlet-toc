@@ -5,7 +5,11 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "HAL/IConsoleManager.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Components/PrimitiveComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialInterface.h"
 
 void AClickSelectPlayerController::BeginPlay()
 {
@@ -14,6 +18,13 @@ void AClickSelectPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
+
+	if (IConsoleVariable* CustomDepthVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.CustomDepth")))
+	{
+		CustomDepthVar->Set(3, ECVF_SetByCode);
+	}
+
+	ConfigureOutlinePostProcess();
 }
 
 void AClickSelectPlayerController::SetupInputComponent()
@@ -74,9 +85,36 @@ void AClickSelectPlayerController::SetActorSelected(AActor* Actor, bool bSelecte
 		}
 
 		PrimitiveComponent->SetRenderCustomDepth(bSelected);
-		if (bSelected)
-		{
-			PrimitiveComponent->SetCustomDepthStencilValue(1);
-		}
+		PrimitiveComponent->SetCustomDepthStencilValue(bSelected ? SelectionStencilValue : 0);
 	}
+}
+
+void AClickSelectPlayerController::ConfigureOutlinePostProcess()
+{
+	if (!PlayerCameraManager)
+	{
+		return;
+	}
+
+	if (!SelectionOutlineMaterial)
+	{
+		SelectionOutlineMaterial = LoadObject<UMaterialInterface>(
+			nullptr,
+			TEXT("/Engine/EditorMaterials/SelectionOutlineMaterial.SelectionOutlineMaterial"));
+	}
+
+	if (!SelectionOutlineMaterial)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelectionOutlineMaterial is not set; assign a post-process outline material to enable selection highlighting."));
+		return;
+	}
+
+	SelectionOutlineMID = UMaterialInstanceDynamic::Create(SelectionOutlineMaterial, this);
+	if (!SelectionOutlineMID)
+	{
+		return;
+	}
+
+	SelectionOutlineMID->SetVectorParameterValue(TEXT("OutlineColor"), SelectionOutlineColor);
+	PlayerCameraManager->ViewTarget.POV.PostProcessSettings.AddBlendable(SelectionOutlineMID, 1.0f);
 }
